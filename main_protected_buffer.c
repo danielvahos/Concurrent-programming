@@ -124,13 +124,13 @@ int main(int argc, char *argv[]){
   // Create consumers and then producers. Pass the *value* of i
   // as parametre of the main procedure (main_consumer or main_producer).
     //Thread for producers:
-  pthread_t producers[n_producers];
+  //pthread_t producers[n_producers];
   //int *arg_prod;
 
   //int *arg_consum;
   int *arg;
-  pthread_t consumers[n_consumers];
-
+  //pthread_t consumers[n_consumers];
+tasks= malloc(sizeof(n_producers+n_consumers));//We have to give it a SIZE
 //We first create consumers
   for (i=0; i<n_consumers; i++) {
     //arg_consum=malloc(sizeof(int));
@@ -138,9 +138,9 @@ int main(int argc, char *argv[]){
 
     arg=malloc(sizeof(int));
     *arg=i;
-    pthread_create(&consumers[i], NULL, main_consumer, arg);
+    pthread_create(&tasks[i], NULL, main_consumer, arg);
 
-    tasks[i]= &consumers[i]; //save the threads of consumers in tasks
+    //tasks[i]= &consumers[i]; //save the threads of consumers in tasks
   }
 
   //and then.. we create producers
@@ -151,8 +151,8 @@ int main(int argc, char *argv[]){
 
     arg= malloc(sizeof(int));
     *arg=i;
-    pthread_create(&producers[i], NULL, main_producer, arg);
-    tasks[i]= &producers[i]; //save the threads of producers in tasks
+    pthread_create(&tasks[i], NULL, main_producer, arg);
+    //tasks[i]= &producers[i]; //save the threads of producers in tasks
   }
 
 
