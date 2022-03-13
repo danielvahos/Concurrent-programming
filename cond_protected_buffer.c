@@ -12,6 +12,8 @@ protected_buffer_t * cond_protected_buffer_init(int length) {
   b = (protected_buffer_t *)malloc(sizeof(protected_buffer_t));
   b->buffer = circular_buffer_init(length);
   // Initialize the synchronization components
+  pthread_mutex_init(&(b->mutex), NULL); //initialization of mutex in prot buffer
+  pthread_cond_init(&(b->v),NULL); //initialization of cond in prot buffer
   return b;
 }
 
@@ -21,18 +23,27 @@ void * cond_protected_buffer_get(protected_buffer_t * b){
   void * d;
   
   // Enter mutual exclusion
+
+  pthread_mutex_lock(&b->mutex);
   
   // Wait until there is a full slot to get data from the unprotected
   // circular buffer (circular_buffer_get).
-  
+
+  while ((d = circular_buffer_get(b->buffer)) == NULL){
+    pthread_cond_wait(&(b->v), &(b->mutex));
+  }
+
+
   // Signal or broadcast that an empty slot is available in the
   // unprotected circular buffer (if needed)
+  pthread_cond_broadcast(&(b->v));
+
 
   d = circular_buffer_get(b->buffer);
   print_task_activity ("get", d);
 
   // Leave mutual exclusion
-  
+  pthread_mutex_unlock(&(b->mutex));
   return d;
 }
 
