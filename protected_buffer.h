@@ -10,7 +10,8 @@ typedef struct {
   long                sem_impl;
   circular_buffer_t * buffer;
   pthread_mutex_t mutex;
-  pthread_cond_t v;
+  pthread_cond_t v_empty;
+  pthread_cond_t v_full;
 
 
 } protected_buffer_t;

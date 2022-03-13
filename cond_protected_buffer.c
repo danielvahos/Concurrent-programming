@@ -13,7 +13,8 @@ protected_buffer_t * cond_protected_buffer_init(int length) {
   b->buffer = circular_buffer_init(length);
   // Initialize the synchronization components
   pthread_mutex_init(&(b->mutex), NULL); //initialization of mutex in prot buffer
-  pthread_cond_init(&(b->v),NULL); //initialization of cond in prot buffer
+  pthread_cond_init(&(b->v_empty),NULL); //initialization of cond in prot buffer
+  pthread_cond_init(&(b->v_full),NULL); //initialization of cond in prot buffer
   return b;
 }
 
@@ -30,22 +31,25 @@ void * cond_protected_buffer_get(protected_buffer_t * b){
   // circular buffer (circular_buffer_get).
 
   while ((d = circular_buffer_get(b->buffer)) == NULL){
-    pthread_cond_wait(&(b->v), &(b->mutex));
+    pthread_cond_wait(&(b->v_full), &(b->mutex));
   }
 
-
+  //print_task_activity ("get", d);
   // Signal or broadcast that an empty slot is available in the
   // unprotected circular buffer (if needed)
-  pthread_cond_broadcast(&(b->v));
+  pthread_cond_broadcast(&(b->v_empty));
 
 
-  d = circular_buffer_get(b->buffer);
+  //d = circular_buffer_get(b->buffer);
   print_task_activity ("get", d);
 
   // Leave mutual exclusion
   pthread_mutex_unlock(&(b->mutex));
   return d;
 }
+
+  //condfull - condempty for the get
+  //condempty - condfull fot the put
 
 // Insert an element into buffer. If the attempted operation is
 // not possible immedidately, the method call blocks until it is.
@@ -56,12 +60,12 @@ void cond_protected_buffer_put(protected_buffer_t * b, void * d){
   // Wait until there is an empty slot to put data in the unprotected
   // circular buffer (circular_buffer_put).
   while((circular_buffer_put(b->buffer, d))==0){
-    pthread_cond_wait(&(b->v),&(b->mutex));
+    pthread_cond_wait(&(b->v_empty),&(b->mutex));
   }
 
   // Signal or broadcast that a full slot is available in the
   // unprotected circular buffer (if needed)
-  pthread_cond_broadcast(&(b->v));
+  pthread_cond_broadcast(&(b->v_full));
 
   circular_buffer_put(b->buffer, d);
   print_task_activity ("put", d);

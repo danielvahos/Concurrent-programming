@@ -124,13 +124,10 @@ int main(int argc, char *argv[]){
   // Create consumers and then producers. Pass the *value* of i
   // as parametre of the main procedure (main_consumer or main_producer).
     //Thread for producers:
-  //pthread_t producers[n_producers];
-  //int *arg_prod;
-
-  //int *arg_consum;
   int *arg;
-  //pthread_t consumers[n_consumers];
-tasks= malloc(sizeof(n_producers+n_consumers));//We have to give it a SIZE
+//tasks= malloc(sizeof(n_producers+n_consumers));//We have to give it a SIZE
+tasks=malloc(sizeof *tasks*(n_consumers+n_producers));
+
 //We first create consumers
   for (i=0; i<n_consumers; i++) {
     //arg_consum=malloc(sizeof(int));
@@ -145,10 +142,6 @@ tasks= malloc(sizeof(n_producers+n_consumers));//We have to give it a SIZE
 
   //and then.. we create producers
   for (i=n_consumers; i<n_producers+n_consumers; i++) {
-
-    //arg_prod= malloc(sizeof(int));
-    //*arg_prod= i;
-
     arg= malloc(sizeof(int));
     *arg=i;
     pthread_create(&tasks[i], NULL, main_producer, arg);
@@ -206,32 +199,3 @@ void read_file(char * filename){
   get_long   (file, (long *) &producer_period, __FILE__, __LINE__);
   printf ("producer_period = %ld\n", producer_period);
 }
-
-
-/*
-
-/// PROD AND CONSUM
-
-int main(void){
-  //Thread for producers:
-  pthread_t producers[n_producers];
-  int id_prod;
-  int *arg_prod;
-
-  int id_consum;
-  int *arg_consum;
-
-  for (id_prod= 0; id_prod< n_producers; id_prod++){
-    arg_prod= malloc(sizeof(int));
-    *arg_prod= id_prod;
-    pthread_create(&producers[id_prod], NULL, main_producer, arg_prod);
-  }
-
-  pthread_t consumers[n_consumers];
-  for (id_consum=0; id_consum<n_consumers; id_consum++){
-    arg_consum=malloc(sizeof(int));
-    *arg_consum=id_consum;
-    pthread_create(&consumers[id_consum], NULL, main_consumer, arg_consum);
-  }
-}
-*/
