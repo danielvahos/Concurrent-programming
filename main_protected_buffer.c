@@ -148,8 +148,6 @@ tasks=malloc(sizeof *tasks*(n_consumers+n_producers));
     //tasks[i]= &producers[i]; //save the threads of producers in tasks
   }
 
-
-
   // Wait for producers and consumers termination
   for (i=0; i<n_consumers+n_producers; i++) {
     pthread_join(tasks[i], NULL); //we have to wait until null to know it's terminated
