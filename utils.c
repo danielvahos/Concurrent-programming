@@ -21,13 +21,19 @@ long producer_period; // Period of producer (millis)
 
 // Start time as a timespec
 struct timespec start_time;
-pthread_mutex_t resync_mutex;
-pthread_cond_t  resync_condvar;
+
+//Create a delay_mutex and a delay_v for the variablecondition for using them in the function delay_until
+
+pthread_mutex_t resync_mutex, delay_mutex;
+pthread_cond_t  resync_condvar, delay_v;
 
 void init_utils(){
   pthread_key_create(&task_info_key, NULL);
   pthread_mutex_init (&resync_mutex, NULL);
   pthread_cond_init (&resync_condvar, NULL);
+
+  pthread_mutex_init (&delay_mutex, NULL); //Initializing for the delay_until function
+  pthread_cond_init (&delay_v, NULL);//Initializing for the delay_until function
 }
 
 char sem_img[] = "BUT";
@@ -111,6 +117,12 @@ void delay_until(struct timespec * absolute_time) {
   if (relative_time.tv_sec < 0) return;
   
   nanosleep (&relative_time, NULL);
+
+  //Adding the delay_v and delay_mutex for WAITING UNTIL A GIVEN DATE
+  pthread_mutex_lock (&delay_mutex);
+
+  pthread_cond_timedwait (&delay_v, &delay_mutex, absolute_time); //waiting the time
+  pthread_mutex_unlock (&delay_mutex);
 }
 
 // Compute time elapsed from start time
