@@ -22,6 +22,13 @@ long producer_period; // Period of producer (millis)
 // Start time as a timespec
 struct timespec start_time;
 
+/*
+QUESTION 1.5
+Using pthred_cond_timedwait(), it's possible to make a thread wait until 
+the condition of time is done, with this we solve the problem of the possibilty
+of not changing values due to the time problems
+*/
+
 //Create a delay_mutex and a delay_v for the variablecondition for using them in the function delay_until
 
 pthread_mutex_t resync_mutex, delay_mutex;
