@@ -13,6 +13,9 @@ typedef struct {
   pthread_cond_t v_empty;
   pthread_cond_t v_full;
 
+  sem_t * semaph_full;
+  sem_t * semaph_empty;
+
 
 } protected_buffer_t;
 
